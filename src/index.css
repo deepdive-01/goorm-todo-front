@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard", sans-serif;
+
+  --color-primary: #50dea8;
+  --color-primary-light: #ebfaf4;
+  --color-quick: #f7a8ad;
+  --color-plan: #c2a0fa;
+  --color-drop: #e6e6e6;
+  --color-black: #383838;
+  --color-white: #ffffff;
+  --color-gray-text: #cccccc;
+  --color-gray-ui: #fafafa;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Pretendard", sans-serif;
+}
