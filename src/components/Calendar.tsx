@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { isSameDay, isSameMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Text from '@/components/Text';
-import LeftArrow from '../../src/pages/calendar/left-arrow.svg?react';
-import RightArrow from '../../src/pages/calendar/left-arrow.svg?react';
+import LeftArrow from '../pages/calendar/left-arrow.svg?react';
+import RightArrow from '../pages/calendar/right-arrow.svg?react';
 
 type EventCategory = 'focus' | 'quick' | 'plan' | 'drop';
 
@@ -64,17 +64,8 @@ const m = today.getMonth();
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(y, m, 1), categories: ['focus', 'plan', 'quick'] },
   { date: new Date(y, m, 2), categories: ['focus', 'quick'] },
-  { date: new Date(y, m, 3), categories: ['drop'] },
-  { date: new Date(y, m, 7), categories: ['quick', 'plan'] },
-  { date: new Date(y, m, 8), categories: ['focus'] },
-  { date: new Date(y, m, 11), categories: ['plan', 'quick'] },
-  { date: new Date(y, m, 13), categories: ['focus', 'plan'] },
-  { date: new Date(y, m, 15), categories: ['focus', 'plan', 'quick'] },
-  { date: new Date(y, m, 17), categories: ['drop'] },
-  { date: new Date(y, m, 20), categories: ['focus', 'plan'] },
-  { date: new Date(y, m, 24), categories: ['quick', 'plan'] },
-  { date: new Date(y, m, 26), categories: ['focus', 'quick'] },
-  { date: new Date(y, m, 30), categories: ['focus', 'quick'] },
+  { date: new Date(y, m, 20), categories: ['focus', 'quick', 'plan', 'drop'] },
+  { date: new Date(y, m, 25), categories: ['focus', 'quick'] },
 ];
 
 export default function Calendar({
@@ -112,38 +103,28 @@ export default function Calendar({
   return (
     <div className="w-full">
       {/* 헤더 */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 px-2">
         <Text variant="heading" className="text-black">
           {format(currentMonth, 'yyyy년 M월', { locale: ko })}
         </Text>
 
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={handlePrevMonth}
-            className="w-6 h-6 flex items-center justify-center active:scale-90 transition-transform"
-            aria-label="이전 달"
-          >
+          <button onClick={handlePrevMonth} className="p-1 active:scale-90 transition-transform">
             <LeftArrow className="text-primary w-5 h-5" />
           </button>
-          <button
-            type="button"
-            onClick={handleNextMonth}
-            className="w-6 h-6 flex items-center justify-center active:scale-90 transition-transform"
-            aria-label="다음 달"
-          >
+          <button onClick={handleNextMonth} className="p-1 active:scale-90 transition-transform">
             <RightArrow className="text-primary w-5 h-5" />
           </button>
         </div>
       </div>
 
       {/* 달력 본체 */}
-      <div className="bg-white rounded-[32px] p-8">
+      <div className="bg-white rounded-[32px] p-6 shadow-sm">
         {/* 요일 헤더 */}
-        <div className="grid grid-cols-7 mb-3">
+        <div className="grid grid-cols-7 mb-2">
           {DAYS_KO.map((d) => (
             <div key={d} className="flex items-center justify-center">
-              <Text variant="label" className="text-black">
+              <Text variant="label" className="text-gray-text">
                 {d}
               </Text>
             </div>
@@ -151,7 +132,7 @@ export default function Calendar({
         </div>
 
         {/* 날짜 그리드 */}
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7 gap-y-1 justify-items-center">
           {days.map((date, idx) => {
             const isCurrentMonth = isSameMonth(date, currentMonth);
             const isSelected = isSameDay(date, selected);
@@ -161,39 +142,38 @@ export default function Calendar({
               <button
                 key={idx}
                 onClick={() => handleDayClick(date)}
-                className="relative flex flex-col items-center justify-start pt-1 h-[48px] rounded-lg cursor-pointer hover:bg-gray-ui active:bg-primary-light transition-all"
+                className="flex flex-col items-center justify-center h-[36]px gap-[2px] rounded-[4px] cursor-pointer active:bg-primary-light transition-all"
               >
-                {/* 날짜 숫자 - 고정 위치 */}
+                {/* 선택 시 나타나는 정사각형 배경 */}
                 <div
-                  className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                    isSelected ? 'bg-primary-light' : ''
+                  className={`relative w-[37.57px] h-[36px] rounded-[8px] transition-colors ${
+                    isSelected
+                      ? 'bg-primary-light'
+                      : ''
                   }`}
                 >
+                  {/* 날짜 숫자 */}
                   <Text
                     variant="body"
-                    className={
-                      isSelected
-                        ? 'text-black font-semibold'
-                        : isCurrentMonth
-                        ? 'text-black'
-                        : 'text-gray-text'
-                    }
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none ${
+                      isCurrentMonth ? 'text-black' : 'text-gray-text'
+                    }`}
                   >
                     {date.getDate()}
                   </Text>
-                </div>
 
-                {/* 이벤트 도트 - 절대 위치로 하단 고정 */}
-                {categories.length > 0 && (
-                  <div className="absolute bottom-1 flex items-center gap-[3px]">
-                    {categories.slice(0, 3).map((cat, i) => (
-                      <div
-                        key={i}
-                        className={`w-[5px] h-[5px] rounded-full ${categoryColors[cat]}`}
-                      />
-                    ))}
-                  </div>
-                )}
+                  {/* 하단 카테고리 도트 */}
+                  {categories.length > 0 && (
+                    <div className="absolute bottom-[4px] left-1/2 -translate-x-1/2 flex items-center gap-[2px]">
+                      {categories.slice(0, 4).map((cat, i) => (
+                        <div
+                          key={i}
+                          className={`w-[4px] h-[4px] rounded-full ${categoryColors[cat]}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </button>
             );
           })}
