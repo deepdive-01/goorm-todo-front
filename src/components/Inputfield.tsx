@@ -54,7 +54,6 @@ export default function InputField({
           placeholder:text-gray-text
           
           /* 포커스 시 부드러운 효과(미정) */
-          
         `}
       />
     </div>

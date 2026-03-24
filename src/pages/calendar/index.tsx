@@ -6,8 +6,7 @@ import SectionHeader from '@/components/SectionHeader';
 import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
-import Button from '@/components/button';
-import InputField from '@/components/Inputfield';
+
 
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
