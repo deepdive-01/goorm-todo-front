@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { isSameDay, isSameMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import LeftArrow from '../leftarrow.svg?react';
-import RightArrow from '../rightarrow.svg?react';
+import LeftArrow from '../left-arrow.svg?react';
+import RightArrow from '../right-arrow.svg?react';
 import Text from '@/components/Text';
 
-export type EventCategory = 'focus' | 'quick' | 'plan' | 'drop';
+type EventCategory = 'focus' | 'quick' | 'plan' | 'drop';
 
 export type DayEvent = {
   date: Date;
@@ -20,10 +20,10 @@ type CalendarProps = {
 const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
 const categoryColors: Record<EventCategory, string> = {
-  focus: 'bg-[#4CC38A]',
-  quick: 'bg-[#F08080]',
-  plan:  'bg-[#B39DDB]',
-  drop:  'bg-[#D5D5D5]',
+  focus: 'bg-primary',
+  quick: 'bg-quick',
+  plan:  'bg-plan',
+  drop:  'bg-drop',
 };
 
 function getCalendarDays(year: number, month: number): Date[] {
@@ -119,9 +119,13 @@ export default function Calendar({ events = DUMMY_EVENTS, onDayClick }: Calendar
       {/* 요일 헤더 */}
       <div className="grid grid-cols-7">
         {DAYS_KO.map((d) => (
-          <div key={d} className="text-center text-[14px] text-[#1A1A1A] font-normal py-2">
-            {d}
-          </div>
+          <Text
+            key={d}
+            variant="label"
+            className="text-center text-black py-2"
+            >
+              {d}
+            </Text>
         ))}
       </div>
 
@@ -136,25 +140,33 @@ export default function Calendar({ events = DUMMY_EVENTS, onDayClick }: Calendar
             <button
               key={idx}
               onClick={() => handleDayClick(date)}
-              className="flex flex-col items-center justify-center h-[36px] py-1 gap-[2px] active:scale-90 transition-transform"
+                className="flex flex-col items-center justify-center h-[36px] gap-[2px] rounded-[4px] cursor-pointer active:bg-primary-light active:scale-90 transition-all"
             >
               <div
-                className={`w-[28px] h-[28px] flex items-center justify-center rounded-full text-[14px] transition-colors ${
+                className={`w-[28px] h-[28px] flex items-center justify-center rounded-full transition-colors ${
                   isSelected
-                    ? 'bg-[#D6F2E4] text-[#1A1A1A] font-medium'
-                    : isCurrentMonth
-                    ? 'text-[#1A1A1A]'
-                    : 'text-[#C8C8C8]'
+                    ? 'bg-primary-light'
+                    : ''
                 }`}
               >
+                <Text
+                  className={
+                    isSelected
+                    ? 'text-black'
+                    : isCurrentMonth
+                    ? 'text-black'
+                    : 'text-gray-text'
+                  }
+                  >
                 {date.getDate()}
+                </Text>
               </div>
 
-              <div className="flex gap-[3px] h-[5px] items-center">
+              <div className="flex items-center gap-[2px]">
                 {categories.slice(0, 3).map((cat, i) => (
                   <div
                     key={i}
-                    className={`w-[5px] h-[5px] rounded-full ${categoryColors[cat]}`}
+                    className={`w-[4px] h-[4px] rounded-full ${categoryColors[cat]}`}
                   />
                 ))}
               </div>

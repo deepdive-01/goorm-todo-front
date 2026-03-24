@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Header from '@/components/Header';
-import CalendarSectionHeader from './components/CalendarSectionHeader';
+import SectionHeader from '@/components/SectionHeader';
 import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from './components/Calendar';
 import TodayProgress from './components/TodayProgress';
@@ -39,10 +39,10 @@ export default function CalendarPage() {
           </section>
 
           <section className="w-full flex flex-col gap-6">
-            <CalendarSectionHeader
-              title="오늘의 일정"
-              dateLabel={dateLabel}
-            />
+          <SectionHeader
+            title="이날의 할 일"
+            rightLabel={dateLabel}
+          />
             {DUMMY_TASKS.map((task) => (
               <TodoItem key={task.id} text={task.text} category={task.category} />
             ))}
