@@ -7,7 +7,7 @@ import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
 import Button from '@/components/button';
-
+import InputField from '@/components/Inputfield';
 
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
@@ -22,7 +22,8 @@ const openTodoModal = () => {};
 
 export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
+const [todo, setTodo] = useState('');
+  const [memo, setMemo] = useState('');
   const dateLabel = format(selectedDate, 'M월 d일 EEEE', { locale: ko });
   const completed = DUMMY_TASKS.filter((_, i) => i === 1).length; // 임시
 
@@ -30,14 +31,15 @@ export default function CalendarPage() {
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-93.75 bg-gray-ui">
+      <div className="w-93.75 bg-white-ui">
         <Header />
         
         
         <Button variant="save" onClick={handleSave}>
         저장
         </Button>
-        
+        <InputField type="todo" value={todo} setValue={setTodo} />
+      <InputField type="memo" value={memo} setValue={setMemo} />
         
         <main className="px-6 py-8 flex flex-col gap-12 w-full">
 
