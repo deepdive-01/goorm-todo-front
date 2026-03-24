@@ -1,27 +1,16 @@
-import FrameIcon from '../Img/sparkle.svg';
+import SparkleIcon from '../sparkle.svg?react';
+ '../sparkle.svg';
+import Text from '@/components/Text';
 
-interface TodayProgressProps {
-  total: number;
-  completed: number;
-}
-
-export default function TodayProgress({ total, completed }: TodayProgressProps) {
-  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-
+export default function TodayProgress() {
   return (
-    <div className="mx-4 bg-primary-light rounded-3xl px-5 py-4 flex items-center justify-between">
-      <div>
-        <div className="text-[12px] text-gray-text mb-1">이날의 진행 상황</div>
-        <div className="text-[22px] font-bold text-primary">
-          {percent}%{' '}
-          <span className="text-[16px] font-medium text-black">완료</span>
+    <div className="w-full bg-primary-light rounded-[32px] p-6 flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+            <Text>이날의 진행 상황</Text>
+            <Text variant='title' className='text-primary'>65% 완료</Text>
         </div>
-      </div>
-
-      {/* 아이콘 자리 — 원하는 아이콘으로 교체 */}
-      <div className="w-10 h-10 flex items-center justify-center">
-        <img src={FrameIcon} alt="progress icon" />
-      </div>
+        
+        <SparkleIcon/>
     </div>
   );
 }
