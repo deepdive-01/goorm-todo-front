@@ -1,5 +1,4 @@
 import SparkleIcon from '../sparkle.svg?react';
- '../sparkle.svg';
 import Text from '@/components/Text';
 
 export default function TodayProgress() {
