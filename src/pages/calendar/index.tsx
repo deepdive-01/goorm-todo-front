@@ -7,7 +7,6 @@ import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
 
-
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
 ];
@@ -27,9 +26,8 @@ export default function CalendarPage() {
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-93.75 bg-white-ui">
+      <div className="w-93.75 bg-gray-ui">
         <Header />
-        
         <main className="px-6 py-8 flex flex-col gap-12 w-full">
 
           <section className="w-full flex flex-col gap-6">
