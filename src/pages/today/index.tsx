@@ -1,13 +1,11 @@
-import Text from '@/components/Text';
+import TodoItem from '@/components/TodoItem';
 
 export default function TodayPage() {
   return (
-    <div>
-      <Text variant="title">title</Text>
-      <Text variant="heading">heading</Text>
-      <Text>body</Text>
-      <Text variant="label">label</Text>
-      <Text variant="caption">caption</Text>
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-93.75 bg-gray-ui">
+        <TodoItem />
+      </div>
     </div>
   );
 }
