@@ -6,6 +6,7 @@ import SectionHeader from '@/components/SectionHeader';
 import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
+import Button from '@/components/button';
 
 
 const DUMMY_EVENTS: DayEvent[] = [
@@ -25,10 +26,19 @@ export default function CalendarPage() {
   const dateLabel = format(selectedDate, 'M월 d일 EEEE', { locale: ko });
   const completed = DUMMY_TASKS.filter((_, i) => i === 1).length; // 임시
 
+  const handleSave = () => alert('저장되었습니다!');
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="w-93.75 bg-gray-ui">
         <Header />
+        
+        
+        <Button variant="save" onClick={handleSave}>
+        저장
+        </Button>
+        
+        
         <main className="px-6 py-8 flex flex-col gap-12 w-full">
 
           <section className="w-full flex flex-col gap-6">
