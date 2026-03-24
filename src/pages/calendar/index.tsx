@@ -4,8 +4,9 @@ import { ko } from 'date-fns/locale';
 import Header from '@/components/Header';
 import SectionHeader from '@/components/SectionHeader';
 import TodoItem from '@/components/TodoItem';
-import Calendar, { type DayEvent } from './components/Calendar';
+import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
+
 
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
@@ -47,7 +48,6 @@ export default function CalendarPage() {
               <TodoItem key={task.id} text={task.text} category={task.category} />
             ))}
           </section>
-
         </main>
       </div>
     </div>
