@@ -1,6 +1,6 @@
 import Text from './Text';
 
-type ButtonVariant = 'save' | 'cancel' | 'delete';
+type ButtonVariant = 'primary' | 'quick' | 'gray';
 
 type ButtonProps = {
   children: string;
@@ -13,15 +13,15 @@ type ButtonProps = {
 export default function Button({
   children,
   onClick,
-  variant = 'save',
+  variant = 'primary',
   className = '',
   type = 'button',
 }: ButtonProps) {
   
   const variantStyles: Record<ButtonVariant, string> = {
-    save: 'bg-primary text-white shadow-sm', 
-    cancel: 'bg-white text-black border border-[#f0f0f0] shadow-sm',
-    delete: 'bg-quick text-white shadow-sm', 
+    primary: 'bg-primary text-white shadow-sm', 
+    quick: 'bg-white text-black shadow-sm',
+    gray: 'bg-quick text-white shadow-sm', 
   };
 
   return (
