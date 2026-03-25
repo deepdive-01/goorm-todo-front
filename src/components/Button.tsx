@@ -29,13 +29,7 @@ export default function Button({
       type={type}
       onClick={onClick}
       className={`
-        flex items-center justify-center
-        w-full h-[43px] px-[32px] py-[12px] gap-[10px] 
-        
-        rounded-[9999px] 
-        overflow-hidden 
-        
-        transition-all active:scale-[0.98] active:opacity-90
+        flex items-center justify-center py-3 px-8 gap-2.5 rounded-full overflow-hidden transition-all active:scale-[0.98] active:opacity-90
         ${variantStyles[variant]}
         ${className}
       `}
