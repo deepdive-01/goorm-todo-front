@@ -34,7 +34,7 @@ export default function Button({
         ${className}
       `}
     >
-      <Text variant="body" className="leading-none font-medium">
+      <Text variant="body" className="font-semibold">
         {children}
       </Text>
     </button>
