@@ -29,7 +29,7 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/10 backdrop-blur-md"
         onClick={onClose}
       />
 
@@ -37,7 +37,7 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
       <div className="relative w-full max-w-[343px] bg-white rounded-[40px] px-8 pt-[34px] pb-8 flex flex-col gap-8">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
-          <Text variant="heading">{dateLabel}</Text>
+          <Text variant="heading" className="text-black">{dateLabel}</Text>
           <button
             type="button"
             onClick={onClose}

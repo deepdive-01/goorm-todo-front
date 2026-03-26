@@ -23,15 +23,15 @@ type CategorySelectorProps = {
 
 export default function CategorySelector({ selected, onChange }: CategorySelectorProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <Text variant="label">카테고리</Text>
-      <div className="flex justify-between w-full">
+    <div className="w-full flex flex-col gap-2">
+      <Text variant="label" className="text-black">카테고리</Text>
+      <div className="flex w-full">
         {CATEGORIES.map(({ value, label }) => (
           <button
             key={value}
             type="button"
             onClick={() => onChange(value)}
-            className="flex flex-col items-center gap-1.5 transition-transform"
+            className="flex flex-1 flex-col items-center justify-center gap-1 transition-transform"
           >
             <div
               className={`w-8 h-8 rounded-full ${categoryBg[value]} flex items-center justify-center transition-all ${
