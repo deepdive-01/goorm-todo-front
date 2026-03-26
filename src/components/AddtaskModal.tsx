@@ -34,7 +34,7 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
       />
 
       {/* Card */}
-      <div className="relative w-full max-w-[343px] bg-white rounded-3xl px-8 pt-[34px] pb-8 flex flex-col gap-8">
+      <div className="relative w-full max-w-[343px] bg-white rounded-[40px] px-8 pt-[34px] pb-8 flex flex-col gap-8">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
           <Text variant="heading">{dateLabel}</Text>
