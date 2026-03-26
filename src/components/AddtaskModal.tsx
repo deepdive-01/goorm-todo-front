@@ -68,7 +68,7 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
         />
 
         {/* 버튼 */}
-        <div className="flex gap-3 pb-4">
+        <div className="flex gap-3">
           <Button variant="quick" onClick={onClose}>취소</Button>
           <Button variant="primary" onClick={handleSave}>저장</Button>
         </div>
