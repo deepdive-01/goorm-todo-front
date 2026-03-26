@@ -20,8 +20,8 @@ export default function Button({
   
   const variantStyles: Record<ButtonVariant, string> = {
     primary: 'bg-primary text-white shadow-sm', 
-    quick: 'bg-white text-black shadow-sm',
-    gray: 'bg-quick text-white shadow-sm', 
+    quick: 'bg-quick text-white shadow-sm',
+    gray: 'bg-gray-ui text-black shadow-sm', 
   };
 
   return (
