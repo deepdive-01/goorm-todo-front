@@ -31,7 +31,7 @@ export default function CategorySelector({ selected, onChange }: CategorySelecto
             key={value}
             type="button"
             onClick={() => onChange(value)}
-            className="flex flex-col items-center gap-1.5 transition-transform"
+            className="flex flex-1 flex-col items-center justify-center gap-1 transition-transform"
           >
             <div
               className={`w-8 h-8 rounded-full ${categoryBg[value]} flex items-center justify-center transition-all ${
