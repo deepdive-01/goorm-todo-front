@@ -24,7 +24,7 @@ type CategorySelectorProps = {
 export default function CategorySelector({ selected, onChange }: CategorySelectorProps) {
   return (
     <div className="flex flex-col gap-3">
-      <Text variant="label">카테고리</Text>
+      <Text variant="label" className="text-black">카테고리</Text>
       <div className="flex justify-between w-full">
         {CATEGORIES.map(({ value, label }) => (
           <button
