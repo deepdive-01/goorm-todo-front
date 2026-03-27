@@ -7,6 +7,7 @@ import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
 
+import DeleteModal from '@/components/DeleteModal';
 
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
@@ -17,13 +18,12 @@ const DUMMY_TASKS = [
   { id: '2', text: '유기농 차 블렌드 찾아오기', category: 'quick'  as const },
 ];
 
-const openTodoModal = () => {};
-
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate]       = useState<Date>(new Date());
+  const [isAddModalOpen, setIsAddModalOpen]   = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const dateLabel = format(selectedDate, 'M월 d일 EEEE', { locale: ko });
-  const completed = DUMMY_TASKS.filter((_, i) => i === 1).length; // 임시
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -36,20 +36,49 @@ export default function CalendarPage() {
               events={DUMMY_EVENTS}
               onDayClick={(date) => setSelectedDate(date)}
             />
-            <TodayProgress/>
+            <TodayProgress />
           </section>
 
           <section className="w-full flex flex-col gap-6">
-          <SectionHeader
-            title="이날의 할 일"
-            rightLabel={dateLabel}
-          />
+            <SectionHeader
+              title="이날의 할 일"
+              rightLabel={dateLabel}
+            />
             {DUMMY_TASKS.map((task) => (
               <TodoItem key={task.id} text={task.text} category={task.category} />
             ))}
           </section>
+
+          {/* 임시 테스트 버튼 */}
+          <section className="flex flex-col gap-3">
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full py-3 rounded-full bg-primary text-white"
+            >
+              추가 모달 테스트
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="w-full py-3 rounded-full bg-quick text-white"
+            >
+              삭제 모달 테스트
+            </button>
+          </section>
+
         </main>
       </div>
+
+
+      {/* 삭제 모달 */}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onConfirm={() => {
+            console.log('삭제 확인');
+            setIsDeleteModalOpen(false);
+          }}
+          onClose={() => setIsDeleteModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

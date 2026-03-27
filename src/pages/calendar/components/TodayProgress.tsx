@@ -8,7 +8,6 @@ export default function TodayProgress() {
             <Text>이날의 진행 상황</Text>
             <Text variant='title' className='text-primary'>65% 완료</Text>
         </div>
-        
         <SparkleIcon/>
     </div>
   );

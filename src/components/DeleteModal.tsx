@@ -12,13 +12,10 @@ export default function DeleteModal({ onConfirm, onClose }: DeleteModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
-        onClick={onClose}
+        className="absolute inset-0 bg-black/30 backdrop-blur-md"
       />
 
       {/* Card */}
-
-
       <div className="relative w-full max-w-[343px] bg-white rounded-[40px] flex flex-col overflow-hidden">
 
         {/* 콘텐츠 */}
