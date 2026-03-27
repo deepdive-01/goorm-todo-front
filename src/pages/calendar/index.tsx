@@ -6,8 +6,9 @@ import SectionHeader from '@/components/SectionHeader';
 import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
-
-import DeleteModal from '@/components/DeleteModal';
+import AddTaskModal from '@/components/AddtaskModal';
+import PlusIcon from './plus.svg?react';
+import Footer from '@/components/Footer';
 
 const DUMMY_EVENTS: DayEvent[] = [
   { date: new Date(), categories: ['focus', 'quick'] },
@@ -19,15 +20,15 @@ const DUMMY_TASKS = [
 ];
 
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate]       = useState<Date>(new Date());
-  const [isAddModalOpen, setIsAddModalOpen]   = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dateLabel = format(selectedDate, 'M월 d일 EEEE', { locale: ko });
+  const completed = DUMMY_TASKS.filter((_, i) => i === 1).length;
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-93.75 bg-gray-ui">
+      <div className="relative w-93.75 bg-gray-ui">
         <Header />
         <main className="px-6 py-8 flex flex-col gap-12 w-full">
 
@@ -66,17 +67,28 @@ export default function CalendarPage() {
           </section>
 
         </main>
+        <Footer />
+
+        <div className="sticky bottom-24 flex justify-end px-6 pointer-events-none -mt-14">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="pointer-events-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg active:scale-90 transition-transform z-40"
+            aria-label="할 일 추가"
+          >
+            <PlusIcon />
+          </button>
+        </div>
       </div>
 
-
-      {/* 삭제 모달 */}
-      {isDeleteModalOpen && (
-        <DeleteModal
-          onConfirm={() => {
-            console.log('삭제 확인');
-            setIsDeleteModalOpen(false);
+      {/* AddTaskModal */}
+      {isModalOpen && (
+        <AddTaskModal
+          date={selectedDate}
+          onSave={(data) => {
+            console.log(data); // 추후 실제 저장 로직으로 교체
+            setIsModalOpen(false);
           }}
-          onClose={() => setIsDeleteModalOpen(false)}
+          onClose={() => setIsModalOpen(false)}
         />
       )}
     </div>
