@@ -49,6 +49,23 @@ export default function CalendarPage() {
               <TodoItem key={task.id} text={task.text} category={task.category} />
             ))}
           </section>
+
+          {/* 임시 테스트 버튼 */}
+          <section className="flex flex-col gap-3">
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full py-3 rounded-full bg-primary text-white"
+            >
+              추가 모달 테스트
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="w-full py-3 rounded-full bg-quick text-white"
+            >
+              삭제 모달 테스트
+            </button>
+          </section>
+
         </main>
         <Footer />
 
