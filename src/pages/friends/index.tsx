@@ -4,6 +4,7 @@ import Text from '@/components/Text';
 import Button from '@/components/Button';
 //import FriendItem from "@/components/FriendItem"
 import AddFriendCard from './components/AddFriendCard';
+import RightArrow from './right-arrow.svg?react';
 
 const DUMMY_FRIENDS = [
   { id: '1', name: '김지수' },
@@ -22,7 +23,7 @@ export default function FriendsPage() {
         {/* 친구 요청 확인 */}
           <div className="flex items-center justify-between py-4 bg-white rounded-lg px-4">
             <Text variant="heading" className="text-black">친구 요청 확인</Text>
-            <span className="text-black text-xl">→</span>
+            <RightArrow />
           </div>
         <main className="px-6 py-8 flex flex-col gap-6">
           {/* 친구 목록 */}
