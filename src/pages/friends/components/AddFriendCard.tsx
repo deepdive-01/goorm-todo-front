@@ -7,7 +7,7 @@ export default function AddFriendCard() {
   };
 
   return (
-    <div className="w-[327px] h-[307px] border border-dashed border-primary rounded-[32px] flex flex-col items-center justify-center gap-6 px-6">
+    <div className="w-full h-[307px] border border-dashed border-primary rounded-[32px] flex flex-col items-center justify-center gap-6 px-6">
       {/* 아이콘 - 52x52 */}
       <SmileIcon className="w-[52px] h-[52px]" />
 
