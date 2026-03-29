@@ -9,7 +9,7 @@ const tabs = [
   { key: 'today', label: '오늘', Icon: TodayIcon, path: '/today' },
   { key: 'calendar', label: '캘린더', Icon: CalendarIcon, path: '/calendar' },
   { key: 'friends', label: '친구', Icon: FriendsIcon, path: '/friends' },
-  { key: 'settings', label: '설정', Icon: SettingsIcon, path: '/settings' },
+  { key: 'accounts', label: '계정', Icon: SettingsIcon, path: '/accounts' },
 ] as const;
 
 export default function Footer() {
@@ -17,7 +17,7 @@ export default function Footer() {
   const location = useLocation();
 
   return (
-    <footer className="w-full h-18 flex flex-row bg-white">
+    <footer className="w-full h-18 flex flex-row bg-white absolute bottom-0">
       {tabs.map((tab) => {
         const isActive = location.pathname === tab.path;
 
