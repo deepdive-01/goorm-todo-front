@@ -7,6 +7,7 @@ import TodoItem from '@/components/TodoItem';
 import Calendar, { type DayEvent } from '../../components/Calendar';
 import TodayProgress from './components/TodayProgress';
 import AddTaskModal from '@/components/AddtaskModal';
+import DeleteModal from '@/components/DeleteModal';
 import PlusIcon from './plus.svg?react';
 import Footer from '@/components/Footer';
 
@@ -20,18 +21,24 @@ const DUMMY_TASKS = [
 ];
 
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate]           = useState<Date>(new Date());
+  const [isModalOpen, setIsModalOpen]             = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingTaskId, setDeletingTaskId]       = useState<string | null>(null);
 
   const dateLabel = format(selectedDate, 'M월 d일 EEEE', { locale: ko });
-  const completed = DUMMY_TASKS.filter((_, i) => i === 1).length;
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="relative w-93.75 bg-gray-ui">
-        <Header />
-        <main className="px-6 py-8 flex flex-col gap-12 w-full">
+      <div className="relative w-93.75 min-h-screen flex flex-col bg-gray-ui">
 
+        {/* 헤더 고정 */}
+        <div className="sticky top-0 z-10 bg-gray-ui">
+          <Header />
+        </div>
+
+        {/* 스크롤 영역 */}
+        <main className="px-6 py-8 flex flex-col gap-12 w-full flex-1">
           <section className="w-full flex flex-col gap-6">
             <Calendar
               events={DUMMY_EVENTS}
@@ -46,29 +53,26 @@ export default function CalendarPage() {
               rightLabel={dateLabel}
             />
             {DUMMY_TASKS.map((task) => (
-              <TodoItem key={task.id} text={task.text} category={task.category} />
+              <div
+                key={task.id}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setDeletingTaskId(task.id);
+                  setIsDeleteModalOpen(true);
+                }}
+              >
+                <TodoItem text={task.text} category={task.category} />
+              </div>
             ))}
           </section>
-
-          {/* 임시 테스트 버튼 */}
-          <section className="flex flex-col gap-3">
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="w-full py-3 rounded-full bg-primary text-white"
-            >
-              추가 모달 테스트
-            </button>
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="w-full py-3 rounded-full bg-quick text-white"
-            >
-              삭제 모달 테스트
-            </button>
-          </section>
-
         </main>
-        <Footer />
 
+        {/* 푸터 고정 */}
+        <div className="sticky bottom-0 z-10">
+          <Footer />
+        </div>
+
+        {/* FAB */}
         <div className="sticky bottom-24 flex justify-end px-6 pointer-events-none -mt-14">
           <button
             onClick={() => setIsModalOpen(true)}
@@ -78,17 +82,31 @@ export default function CalendarPage() {
             <PlusIcon />
           </button>
         </div>
+
       </div>
 
-      {/* AddTaskModal */}
       {isModalOpen && (
         <AddTaskModal
           date={selectedDate}
           onSave={(data) => {
-            console.log(data); // 추후 실제 저장 로직으로 교체
+            console.log(data);
             setIsModalOpen(false);
           }}
           onClose={() => setIsModalOpen(false)}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onConfirm={() => {
+            console.log('삭제:', deletingTaskId);
+            setIsDeleteModalOpen(false);
+            setDeletingTaskId(null);
+          }}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingTaskId(null);
+          }}
         />
       )}
     </div>
