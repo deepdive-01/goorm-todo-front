@@ -1,7 +1,11 @@
 import Text from '@/components/Text';
 import QuoteIcon from './quote-icon.svg?react';
 
-export default function LogoutSection() {
+interface LogoutSectionProps {
+  onLogout: () => void;
+}
+
+export default function LogoutSection({ onLogout }: LogoutSectionProps) {
   return (
     <main className="px-6 py-8 flex flex-1 flex-col gap-15 w-full mb-18">
       <section className="w-full flex flex-col gap-4 py-12 border border-primary border-dashed items-center rounded-4xl">
@@ -13,7 +17,9 @@ export default function LogoutSection() {
       </section>
       <section className="flex gap-2.5 justify-center pb-5">
         <Text className="text-black">현재 계정에서 로그아웃하시겠어요?</Text>
-        <Text className="text-primary hover:underline cursor-pointer">로그아웃</Text>
+        <button onClick={onLogout}>
+          <Text className="text-primary hover:underline cursor-pointer">로그아웃</Text>
+        </button>
       </section>
     </main>
   );

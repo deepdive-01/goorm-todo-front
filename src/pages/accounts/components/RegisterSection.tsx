@@ -1,13 +1,53 @@
 import { useState } from 'react';
 import Text from '@/components/Text';
 import Input from '@/components/Input';
+import { registerApi } from '@/api/auth';
 
-export default function RegisterSection() {
+interface RegisterSectionProps {
+  onRegisterSuccess: () => void;
+  onMoveToLogin: () => void;
+}
+
+export default function RegisterSection({
+  onRegisterSuccess,
+  onMoveToLogin,
+}: RegisterSectionProps) {
   const [id, setId] = useState('');
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleRegister = async () => {
+    if (password !== passwordConfirm) {
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setErrorMessage('');
+
+      await registerApi({
+        username: id,
+        nickname,
+        email,
+        password,
+      });
+
+      onRegisterSuccess();
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('회원가입 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="px-6 py-8 flex flex-1 flex-col gap-15 w-full mb-18">
@@ -61,13 +101,25 @@ export default function RegisterSection() {
           )}
         </div>
 
-        <button className="w-full rounded-full bg-primary text-white py-4 mt-7.5 cursor-pointer hover:bg-primary/90">
+        {errorMessage && (
+          <Text variant="caption" className="text-[#ff0000]">
+            {errorMessage}
+          </Text>
+        )}
+
+        <button
+          onClick={handleRegister}
+          disabled={loading}
+          className="w-full rounded-full bg-primary text-white py-4 mt-7.5 cursor-pointer hover:bg-primary/90"
+        >
           <Text variant="heading">회원가입</Text>
         </button>
       </section>
       <section className="flex gap-2.5 justify-center pb-5">
         <Text className="text-black">이미 계정이 있으신가요?</Text>
-        <Text className="text-primary hover:underline cursor-pointer">로그인</Text>
+        <button onClick={onMoveToLogin}>
+          <Text className="text-primary hover:underline cursor-pointer">로그인</Text>
+        </button>
       </section>
     </main>
   );
