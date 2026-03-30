@@ -30,7 +30,6 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/10 backdrop-blur-md"
-        onClick={onClose}
       />
 
       {/* Card */}

@@ -17,9 +17,9 @@ export default function Footer() {
   const location = useLocation();
 
   return (
-    <footer className="w-full h-18 flex flex-row bg-white absolute bottom-0">
+    <footer className="w-full h-18 flex flex-row bg-white sticky bottom-0">
       {tabs.map((tab) => {
-        const isActive = location.pathname === tab.path;
+        const isActive =   location.pathname === tab.path || (tab.key === 'friends' && location.pathname === '/friendstodo');
 
         return (
           <FooterButton

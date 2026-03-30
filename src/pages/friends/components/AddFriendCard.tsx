@@ -16,17 +16,15 @@ export default function AddFriendCard() {
           친구를 추가해보세요!
         </Text>
         <Text variant="body" className="text-black text-center">
-          친구와 할 일을 함께할 수 있습니다.
+          친구의 할 일을 확인할 수 있습니다.
         </Text>
       </div>
 
-      <Button
-        variant="primary"
-        onClick={handleFindFriend}
-        className="w-[134.5px]"
-      >
-        친구 찾기
-      </Button>
+      <div className="w-[134.5px]">
+        <Button variant="primary" onClick={handleFindFriend}>
+          친구 찾기
+        </Button>
+      </div>
     </div>
   );
 }
