@@ -31,14 +31,10 @@ export default function CalendarPage() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="relative w-93.75 min-h-screen flex flex-col bg-gray-ui">
-
-        {/* 헤더 고정 */}
-        <div className="sticky top-0 z-10 bg-gray-ui">
-          <Header />
-        </div>
+        <Header />
 
         {/* 스크롤 영역 */}
-        <main className="px-6 py-8 flex flex-col gap-12 w-full flex-1">
+        <main className="px-6 pb-8 flex flex-col gap-6 w-full flex-1">
           <section className="w-full flex flex-col gap-6">
             <Calendar
               events={DUMMY_EVENTS}
@@ -66,12 +62,7 @@ export default function CalendarPage() {
             ))}
           </section>
         </main>
-
-        {/* 푸터 고정 */}
-        <div className="sticky bottom-0 z-10">
-          <Footer />
-        </div>
-
+        <Footer />
         {/* FAB */}
         <div className="sticky bottom-24 flex justify-end px-6 pointer-events-none -mt-14">
           <button

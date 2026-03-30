@@ -17,12 +17,7 @@ export default function FriendsPage() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="relative w-93.75 min-h-screen flex flex-col bg-gray-ui">
-
-        {/* 헤더 고정 */}
-        <div className="sticky top-0 z-10 bg-gray-ui">
-          <Header />
-        </div>
-
+        <Header />
         {/* 스크롤 영역 */}
         <main className="px-6 pb-8 flex flex-col gap-6 w-full flex-1">
 
@@ -49,12 +44,7 @@ export default function FriendsPage() {
           <AddFriendCard />
 
         </main>
-
-        {/* 푸터 고정 */}
-        <div className="sticky bottom-0 z-10">
           <Footer />
-        </div>
-
       </div>
     </div>
   );
