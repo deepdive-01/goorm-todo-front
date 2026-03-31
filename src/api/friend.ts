@@ -34,7 +34,7 @@ export interface FriendStatusUpdateResponse {
 // 4. 친구 목록 조회 아이템
 export interface FriendListItem {
   friend_id: number;
-  request_nickname: string;
+  nickname: string; // request_nickname에서 nickname으로 변경
 }
 
 // 5. 친구 캘린더 조회 응답
@@ -47,6 +47,14 @@ export interface FriendCalendarResponse {
     date: string;
     is_completed: boolean;
   }>;
+}
+
+// 6. 친구 삭제 응답 타입 (이미지 명세 기준)
+export interface FriendDeleteResponse {
+  status: number;
+  code: string;
+  message: string;
+  data: null;
 }
 
 // 유저 검색 결과 타입
@@ -98,6 +106,21 @@ export async function getFriends() {
 export async function getFriendCalendar(friendId: number, month: string = '2025-03') {
   const res = await authFetch(`/api/v1/friends/${friendId}/calendar?month=${month}`);
   if (!res.ok) throw new Error('친구 캘린더 조회 실패');
+  return res.json();
+}
+
+// 6. 친구 삭제 API 추가
+export async function deleteFriend(friendId: number): Promise<FriendDeleteResponse> {
+  const res = await authFetch(`/api/v1/friends/${friendId}`, {
+    method: 'DELETE', // 명세에 따른 DELETE 메서드 사용
+  });
+
+  if (!res.ok) {
+    // 404 에러 등에 대한 처리
+    const errorData = await res.json();
+    throw new Error(errorData.message || '친구 삭제에 실패했습니다.');
+  }
+
   return res.json();
 }
 

@@ -1,5 +1,5 @@
 import Text from './Text';
-import AvatarIcon from '@/assets/avatar-icon.svg?react';
+import AvatarIcon from '@/assets/profile-icon.svg?react';
 import XIcon from '@/assets/x-icon.svg?react';
 import CheckIcon from '@/assets/check-icon.svg?react';
 
@@ -22,8 +22,8 @@ export default function FriendItem({
 }: FriendItemProps) {
   return (
     <div className="w-full h-[88px] flex items-center gap-3 px-4 bg-gray-ui shadow-sm rounded-[32px] flex-shrink-0">
-      {/* 프로필 아바타 영역 */}
-      <div className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-white">
+      {/* 프로필 아바타 영역: primary 보더 추가 */}
+      <div className="w-14 h-14 rounded-full border-2 border-primary flex-shrink-0 flex items-center justify-center overflow-hidden bg-white text-primary">
         <AvatarIcon className="w-full h-full" />
       </div>
 
