@@ -158,7 +158,7 @@ export default function CalendarPage() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-white overflow-hidden">
-      <div className="relative w-93.75 h-full flex flex-col bg-gray-ui overflow-hidden">
+      <div className="relative w-93.75 h-full flex flex-col bg-gray-ui">
         <Header />
 
         <main className="flex-1 overflow-y-auto px-6 pb-32 no-scrollbar flex flex-col gap-6">
