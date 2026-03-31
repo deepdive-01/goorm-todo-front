@@ -6,10 +6,12 @@ import Footer from '@/components/Footer';
 import QuoteIcon from './quote-icon.svg?react';
 import Text from '@/components/Text';
 import AddTaskModal from '@/components/AddtaskModal';
+import DeleteModal from '@/components/DeleteModal';
 import { getRandomQuote } from '@/api/quote';
 import {
   getTodos,
   createTodo,
+  deleteTodo,
   updateTodo,
   updateTodoStatus,
   type TodoItem as Todo,
@@ -64,6 +66,9 @@ export default function TodayPage() {
   const [taskModalMode, setTaskModalMode] = useState<'create' | 'edit'>('create');
   const [taskDateType, setTaskDateType] = useState<'specific' | 'someday'>('specific');
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
 
   const today = formatDate(new Date());
 
@@ -189,10 +194,26 @@ export default function TodayPage() {
       memo,
     });
 
+    closeTaskModal();
     await fetchTodos();
   };
 
-  const todayTodos = todos.filter((todo) => todo.dateType === 'specific');
+  const handleDeleteConfirm = async () => {
+    if (deletingTaskId === null) return;
+
+    try {
+      await deleteTodo(deletingTaskId);
+      setIsDeleteModalOpen(false);
+      setDeletingTaskId(null);
+      await fetchTodos();
+    } catch (error) {
+      console.error('할일 삭제 실패:', error);
+    }
+  };
+
+  const todayTodos = todos.filter(
+    (todo) => todo.dateType === 'specific' && todo.specificDate === today,
+  );
   const somedayTodos = todos.filter((todo) => todo.dateType === 'someday');
 
   return (
@@ -212,15 +233,23 @@ export default function TodayPage() {
               ) : todayTodos.length > 0 ? (
                 <ul className="w-full flex flex-col gap-6">
                   {todayTodos.map((todo) => (
-                    <TodoItem
+                    <div
                       key={todo.id}
-                      id={todo.id}
-                      text={todo.title}
-                      category={mapCategoryToUi(todo.category)}
-                      isCompleted={todo.isCompleted}
-                      onToggle={() => handleToggle(todo)}
-                      onClick={() => openEditModal(todo)}
-                    />
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setDeletingTaskId(todo.id);
+                        setIsDeleteModalOpen(true);
+                      }}
+                    >
+                      <TodoItem
+                        id={todo.id}
+                        text={todo.title}
+                        category={mapCategoryToUi(todo.category)}
+                        isCompleted={todo.isCompleted}
+                        onToggle={() => handleToggle(todo)}
+                        onClick={() => openEditModal(todo)}
+                      />
+                    </div>
                   ))}
                 </ul>
               ) : (
@@ -249,15 +278,23 @@ export default function TodayPage() {
               ) : somedayTodos.length > 0 ? (
                 <ul className="flex flex-col gap-4">
                   {somedayTodos.map((todo) => (
-                    <TodoItem
+                    <div
                       key={todo.id}
-                      id={todo.id}
-                      text={todo.title}
-                      category="later"
-                      isCompleted={todo.isCompleted}
-                      onToggle={() => handleToggle(todo)}
-                      onClick={() => openEditModal(todo)}
-                    />
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setDeletingTaskId(todo.id);
+                        setIsDeleteModalOpen(true);
+                      }}
+                    >
+                      <TodoItem
+                        id={todo.id}
+                        text={todo.title}
+                        category="later"
+                        isCompleted={todo.isCompleted}
+                        onToggle={() => handleToggle(todo)}
+                        onClick={() => openEditModal(todo)}
+                      />
+                    </div>
                   ))}
                 </ul>
               ) : (
@@ -290,6 +327,16 @@ export default function TodayPage() {
           onClose={closeTaskModal}
           onSave={async () => {
             await fetchTodos();
+          }}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onConfirm={handleDeleteConfirm}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingTaskId(null);
           }}
         />
       )}
