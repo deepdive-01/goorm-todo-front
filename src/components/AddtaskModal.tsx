@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Text from '@/components/Text';
@@ -13,6 +13,13 @@ type AddTaskModalProps = {
   date?: Date;
   onSave: (data: { text: string; category: CategoryColor; memo: string }) => void;
   onClose: () => void;
+  initialValues?: {
+    text: string;
+    category: CategoryColor;
+    memo: string;
+  };
+  submitLabel?: string;
+  onSubmit?: (data: { text: string; category: CategoryColor; memo: string }) => Promise<void>;
 };
 
 const mapCategoryToApi = (category: CategoryColor) => {
@@ -30,10 +37,24 @@ const mapCategoryToApi = (category: CategoryColor) => {
   }
 };
 
-export default function AddTaskModal({ mode, date, onSave, onClose }: AddTaskModalProps) {
-  const [text, setText] = useState('');
-  const [category, setCategory] = useState<CategoryColor>('focus');
-  const [memo, setMemo] = useState('');
+export default function AddTaskModal({
+  mode,
+  date,
+  onSave,
+  onClose,
+  initialValues,
+  submitLabel = '저장',
+  onSubmit,
+}: AddTaskModalProps) {
+  const [text, setText] = useState(initialValues?.text ?? '');
+  const [category, setCategory] = useState<CategoryColor>(initialValues?.category ?? 'focus');
+  const [memo, setMemo] = useState(initialValues?.memo ?? '');
+
+  useEffect(() => {
+    setText(initialValues?.text ?? '');
+    setCategory(initialValues?.category ?? 'focus');
+    setMemo(initialValues?.memo ?? '');
+  }, [initialValues]);
 
   const titleLabel =
     mode === 'specific' && date
@@ -44,26 +65,36 @@ export default function AddTaskModal({ mode, date, onSave, onClose }: AddTaskMod
     if (!text.trim()) return;
 
     try {
-      if (mode === 'specific') {
-        if (!date) return;
+      const values = {
+        text: text.trim(),
+        category,
+        memo,
+      };
 
-        await createTodo({
-          title: text.trim(),
-          dateType: 'specific',
-          specificDate: format(date, 'yyyy-MM-dd'),
-          category: mapCategoryToApi(category),
-          memo,
-        });
+      if (onSubmit) {
+        await onSubmit(values);
       } else {
-        await createTodo({
-          title: text.trim(),
-          dateType: 'someday',
-          category: mapCategoryToApi(category),
-          memo,
-        });
+        if (mode === 'specific') {
+          if (!date) return;
+
+          await createTodo({
+            title: values.text,
+            dateType: 'specific',
+            specificDate: format(date, 'yyyy-MM-dd'),
+            category: mapCategoryToApi(values.category),
+            memo: values.memo,
+          });
+        } else {
+          await createTodo({
+            title: values.text,
+            dateType: 'someday',
+            category: mapCategoryToApi(values.category),
+            memo: values.memo,
+          });
+        }
       }
 
-      onSave({ text: text.trim(), category, memo });
+      onSave(values);
       onClose();
     } catch (err) {
       alert(err instanceof Error ? err.message : '저장에 실패했습니다.');
@@ -111,7 +142,7 @@ export default function AddTaskModal({ mode, date, onSave, onClose }: AddTaskMod
             취소
           </Button>
           <Button variant="primary" onClick={handleSave}>
-            저장
+            {submitLabel}
           </Button>
         </div>
       </div>

@@ -7,13 +7,20 @@ import QuoteIcon from './quote-icon.svg?react';
 import Text from '@/components/Text';
 import AddTaskModal from '@/components/AddtaskModal';
 import { getRandomQuote } from '@/api/quote';
-import { getTodos, updateTodoStatus, type TodoItem as Todo } from '@/api/todo';
+import {
+  getTodos,
+  createTodo,
+  updateTodo,
+  updateTodoStatus,
+  type TodoItem as Todo,
+} from '@/api/todo';
+import type { CategoryColor } from '@/pages/calendar/components/CategorySelector';
 
 const formatDate = (date: Date) => {
   return date.toISOString().split('T')[0];
 };
 
-const mapCategoryToUi = (category: Todo['category']) => {
+const mapCategoryToUi = (category: Todo['category']): CategoryColor => {
   switch (category) {
     case 'FOCUS':
       return 'focus';
@@ -28,6 +35,21 @@ const mapCategoryToUi = (category: Todo['category']) => {
   }
 };
 
+const mapCategoryToApi = (category: CategoryColor) => {
+  switch (category) {
+    case 'focus':
+      return 'FOCUS';
+    case 'quick':
+      return 'QUICK';
+    case 'plan':
+      return 'PLAN';
+    case 'drop':
+      return 'DROP';
+    default:
+      return 'PLAN';
+  }
+};
+
 export default function TodayPage() {
   const [quote, setQuote] = useState({
     content: '',
@@ -38,16 +60,17 @@ export default function TodayPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isTodoLoading, setIsTodoLoading] = useState(true);
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [addMode, setAddMode] = useState<'specific' | 'someday'>('specific');
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [taskModalMode, setTaskModalMode] = useState<'create' | 'edit'>('create');
+  const [taskDateType, setTaskDateType] = useState<'specific' | 'someday'>('specific');
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+
+  const today = formatDate(new Date());
 
   const fetchTodos = async () => {
     try {
       setIsTodoLoading(true);
-
-      const today = formatDate(new Date());
       const result = await getTodos(today);
-
       setTodos(result.data);
     } catch (error) {
       console.error('할일 목록 조회 실패:', error);
@@ -56,13 +79,23 @@ export default function TodayPage() {
     }
   };
 
-  const openTodoModal = (mode: 'specific' | 'someday') => {
-    setAddMode(mode);
-    setIsAddModalOpen(true);
+  const openCreateModal = (mode: 'specific' | 'someday') => {
+    setTaskModalMode('create');
+    setTaskDateType(mode);
+    setSelectedTodo(null);
+    setIsTaskModalOpen(true);
   };
 
-  const closeTodoModal = () => {
-    setIsAddModalOpen(false);
+  const openEditModal = (todo: Todo) => {
+    setTaskModalMode('edit');
+    setTaskDateType(todo.dateType === 'someday' ? 'someday' : 'specific');
+    setSelectedTodo(todo);
+    setIsTaskModalOpen(true);
+  };
+
+  const closeTaskModal = () => {
+    setIsTaskModalOpen(false);
+    setSelectedTodo(null);
   };
 
   useEffect(() => {
@@ -101,9 +134,62 @@ export default function TodayPage() {
           item.id === todo.id ? { ...item, isCompleted: !item.isCompleted } : item,
         ),
       );
+
+      setSelectedTodo((prev) =>
+        prev && prev.id === todo.id ? { ...prev, isCompleted: !prev.isCompleted } : prev,
+      );
     } catch (error) {
       console.error('할일 상태 업데이트 실패:', error);
     }
+  };
+
+  const handleCreateSubmit = async ({
+    text,
+    category,
+    memo,
+  }: {
+    text: string;
+    category: CategoryColor;
+    memo: string;
+  }) => {
+    if (taskDateType === 'specific') {
+      await createTodo({
+        title: text,
+        dateType: 'specific',
+        specificDate: today,
+        category: mapCategoryToApi(category),
+        memo,
+      });
+    } else {
+      await createTodo({
+        title: text,
+        dateType: 'someday',
+        category: mapCategoryToApi(category),
+        memo,
+      });
+    }
+
+    await fetchTodos();
+  };
+
+  const handleEditSubmit = async ({
+    text,
+    category,
+    memo,
+  }: {
+    text: string;
+    category: CategoryColor;
+    memo: string;
+  }) => {
+    if (!selectedTodo) return;
+
+    await updateTodo(selectedTodo.id, {
+      title: text,
+      category: mapCategoryToApi(category),
+      memo,
+    });
+
+    await fetchTodos();
   };
 
   const todayTodos = todos.filter((todo) => todo.dateType === 'specific');
@@ -119,7 +205,7 @@ export default function TodayPage() {
               <SectionHeader
                 title="오늘의 할 일"
                 rightLabel="새로 추가"
-                onRightPress={() => openTodoModal('specific')}
+                onRightPress={() => openCreateModal('specific')}
               />
               {isTodoLoading ? (
                 <Text>불러오는 중...</Text>
@@ -133,6 +219,7 @@ export default function TodayPage() {
                       category={mapCategoryToUi(todo.category)}
                       isCompleted={todo.isCompleted}
                       onToggle={() => handleToggle(todo)}
+                      onClick={() => openEditModal(todo)}
                     />
                   ))}
                 </ul>
@@ -155,7 +242,7 @@ export default function TodayPage() {
               <SectionHeader
                 title="언젠가 할 일"
                 rightLabel="새로 추가"
-                onRightPress={() => openTodoModal('someday')}
+                onRightPress={() => openCreateModal('someday')}
               />
               {isTodoLoading ? (
                 <Text>불러오는 중...</Text>
@@ -169,6 +256,7 @@ export default function TodayPage() {
                       category="later"
                       isCompleted={todo.isCompleted}
                       onToggle={() => handleToggle(todo)}
+                      onClick={() => openEditModal(todo)}
                     />
                   ))}
                 </ul>
@@ -181,11 +269,25 @@ export default function TodayPage() {
         </div>
       </div>
 
-      {isAddModalOpen && (
+      {isTaskModalOpen && (
         <AddTaskModal
-          mode={addMode}
+          mode={taskDateType}
           date={new Date()}
-          onClose={closeTodoModal}
+          initialValues={
+            selectedTodo
+              ? {
+                  text: selectedTodo.title,
+                  category:
+                    selectedTodo.dateType === 'someday'
+                      ? 'plan'
+                      : mapCategoryToUi(selectedTodo.category),
+                  memo: selectedTodo.memo ?? '',
+                }
+              : undefined
+          }
+          submitLabel={taskModalMode === 'create' ? '저장' : '수정'}
+          onSubmit={taskModalMode === 'create' ? handleCreateSubmit : handleEditSubmit}
+          onClose={closeTaskModal}
           onSave={async () => {
             await fetchTodos();
           }}

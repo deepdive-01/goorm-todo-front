@@ -99,3 +99,22 @@ export async function updateTodoStatus(todoId: number, isCompleted: boolean): Pr
     throw new Error('상태 업데이트에 실패했습니다.');
   }
 }
+
+export type TodoUpdateRequest = {
+  title?: string;
+  isCompleted?: boolean;
+  category?: TodoCategory;
+  memo?: string;
+};
+
+export async function updateTodo(todoId: number, request: TodoUpdateRequest): Promise<void> {
+  const response = await authFetch(`/api/v1/todos/${todoId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || '할일 수정에 실패했습니다.');
+  }
+}
