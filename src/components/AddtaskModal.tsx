@@ -9,33 +9,61 @@ import CloseIcon from '@/assets/close.svg?react';
 import { createTodo } from '@/api/todo';
 
 type AddTaskModalProps = {
-  date: Date;
+  mode: 'specific' | 'someday';
+  date?: Date;
   onSave: (data: { text: string; category: CategoryColor; memo: string }) => void;
   onClose: () => void;
 };
 
-export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProps) {
+const mapCategoryToApi = (category: CategoryColor) => {
+  switch (category) {
+    case 'focus':
+      return 'FOCUS';
+    case 'quick':
+      return 'QUICK';
+    case 'plan':
+      return 'PLAN';
+    case 'drop':
+      return 'DROP';
+    default:
+      return 'PLAN';
+  }
+};
+
+export default function AddTaskModal({ mode, date, onSave, onClose }: AddTaskModalProps) {
   const [text, setText] = useState('');
   const [category, setCategory] = useState<CategoryColor>('focus');
   const [memo, setMemo] = useState('');
 
-  const dateLabel = format(date, 'M월 d일 EEEE', { locale: ko });
+  const titleLabel =
+    mode === 'specific' && date
+      ? format(date, 'M월 d일 EEEE', { locale: ko })
+      : '언젠가 할 일 추가';
 
   const handleSave = async () => {
     if (!text.trim()) return;
 
     try {
-      // API 명세서 규격에 맞게 매핑
-      await createTodo({
-        title: text.trim(),
-        dateType: 'specific',
-        specificDate: format(date, 'yyyy-MM-dd'),
-        category: category.toUpperCase(), // 'focus' -> 'FOCUS'
-        memo: memo,
-      });
+      if (mode === 'specific') {
+        if (!date) return;
+
+        await createTodo({
+          title: text.trim(),
+          dateType: 'specific',
+          specificDate: format(date, 'yyyy-MM-dd'),
+          category: mapCategoryToApi(category),
+          memo,
+        });
+      } else {
+        await createTodo({
+          title: text.trim(),
+          dateType: 'someday',
+          category: mapCategoryToApi(category),
+          memo,
+        });
+      }
 
       onSave({ text: text.trim(), category, memo });
-      console.log('specificDate');
       onClose();
     } catch (err) {
       alert(err instanceof Error ? err.message : '저장에 실패했습니다.');
@@ -45,15 +73,12 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/10 backdrop-blur-md" />
 
-      {/* Card */}
       <div className="relative w-full max-w-[343px] bg-white rounded-[40px] px-8 pt-[34px] pb-8 flex flex-col gap-8">
-        {/* 헤더 */}
         <div className="flex items-center justify-between">
           <Text variant="heading" className="text-black">
-            {dateLabel}
+            {titleLabel}
           </Text>
           <button
             type="button"
@@ -65,7 +90,6 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           </button>
         </div>
 
-        {/* 할 일 */}
         <Input
           label="할 일"
           value={text}
@@ -73,10 +97,8 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           placeholder="할 일을 입력하세요"
         />
 
-        {/* 카테고리 */}
         <CategorySelector selected={category} onChange={setCategory} />
 
-        {/* 메모 */}
         <Input
           label="메모"
           value={memo}
@@ -84,7 +106,6 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           placeholder="메모를 입력하세요"
         />
 
-        {/* 버튼 */}
         <div className="flex gap-3">
           <Button variant="quick" onClick={onClose}>
             취소

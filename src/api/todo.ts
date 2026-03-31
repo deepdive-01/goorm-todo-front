@@ -24,13 +24,20 @@ export type TodoResponse = {
 };
 
 // 3. 할일 생성 요청 데이터 구조 (명세서 기준)
-export type TodoCreateRequest = {
-  title: string;
-  dateType: 'specific';
-  specificDate: string; // date -> specificDate
-  category: string;
-  memo: string;
-};
+export type TodoCreateRequest =
+  | {
+      title: string;
+      dateType: 'specific';
+      specificDate: string;
+      category: string;
+      memo: string;
+    }
+  | {
+      title: string;
+      dateType: 'someday';
+      category: string;
+      memo: string;
+    };
 
 // --- API 함수들 ---
 
