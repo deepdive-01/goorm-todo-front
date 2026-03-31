@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Text from '@/components/Text';
@@ -9,33 +9,92 @@ import CloseIcon from '@/assets/close.svg?react';
 import { createTodo } from '@/api/todo';
 
 type AddTaskModalProps = {
-  date: Date;
+  mode: 'specific' | 'someday';
+  date?: Date;
   onSave: (data: { text: string; category: CategoryColor; memo: string }) => void;
   onClose: () => void;
+  initialValues?: {
+    text: string;
+    category: CategoryColor;
+    memo: string;
+  };
+  submitLabel?: string;
+  onSubmit?: (data: { text: string; category: CategoryColor; memo: string }) => Promise<void>;
 };
 
-export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProps) {
-  const [text, setText] = useState('');
-  const [category, setCategory] = useState<CategoryColor>('focus');
-  const [memo, setMemo] = useState('');
+const mapCategoryToApi = (category: CategoryColor) => {
+  switch (category) {
+    case 'focus':
+      return 'FOCUS';
+    case 'quick':
+      return 'QUICK';
+    case 'plan':
+      return 'PLAN';
+    case 'drop':
+      return 'DROP';
+    default:
+      return 'PLAN';
+  }
+};
 
-  const dateLabel = format(date, 'M월 d일 EEEE', { locale: ko });
+export default function AddTaskModal({
+  mode,
+  date,
+  onSave,
+  onClose,
+  initialValues,
+  submitLabel = '저장',
+  onSubmit,
+}: AddTaskModalProps) {
+  const [text, setText] = useState(initialValues?.text ?? '');
+  const [category, setCategory] = useState<CategoryColor>(initialValues?.category ?? 'focus');
+  const [memo, setMemo] = useState(initialValues?.memo ?? '');
+
+  useEffect(() => {
+    setText(initialValues?.text ?? '');
+    setCategory(initialValues?.category ?? 'focus');
+    setMemo(initialValues?.memo ?? '');
+  }, [initialValues]);
+
+  const titleLabel =
+    mode === 'specific' && date
+      ? format(date, 'M월 d일 EEEE', { locale: ko })
+      : '언젠가 할 일 추가';
 
   const handleSave = async () => {
     if (!text.trim()) return;
 
     try {
-      // API 명세서 규격에 맞게 매핑
-      await createTodo({
-        title: text.trim(),
-        dateType: 'specific',
-        specificDate: format(date, 'yyyy-MM-dd'),
-        category: category.toUpperCase(), // 'focus' -> 'FOCUS'
-        memo: memo,
-      });
+      const values = {
+        text: text.trim(),
+        category,
+        memo,
+      };
 
-      onSave({ text: text.trim(), category, memo });
-      console.log('specificDate');
+      if (onSubmit) {
+        await onSubmit(values);
+      } else {
+        if (mode === 'specific') {
+          if (!date) return;
+
+          await createTodo({
+            title: values.text,
+            dateType: 'specific',
+            specificDate: format(date, 'yyyy-MM-dd'),
+            category: mapCategoryToApi(values.category),
+            memo: values.memo,
+          });
+        } else {
+          await createTodo({
+            title: values.text,
+            dateType: 'someday',
+            category: mapCategoryToApi(values.category),
+            memo: values.memo,
+          });
+        }
+      }
+
+      onSave(values);
       onClose();
     } catch (err) {
       alert(err instanceof Error ? err.message : '저장에 실패했습니다.');
@@ -45,15 +104,12 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/10 backdrop-blur-md" />
 
-      {/* Card */}
       <div className="relative w-full max-w-[343px] bg-white rounded-[40px] px-8 pt-[34px] pb-8 flex flex-col gap-8">
-        {/* 헤더 */}
         <div className="flex items-center justify-between">
           <Text variant="heading" className="text-black">
-            {dateLabel}
+            {titleLabel}
           </Text>
           <button
             type="button"
@@ -65,7 +121,6 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           </button>
         </div>
 
-        {/* 할 일 */}
         <Input
           label="할 일"
           value={text}
@@ -73,10 +128,8 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           placeholder="할 일을 입력하세요"
         />
 
-        {/* 카테고리 */}
         <CategorySelector selected={category} onChange={setCategory} />
 
-        {/* 메모 */}
         <Input
           label="메모"
           value={memo}
@@ -84,13 +137,12 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
           placeholder="메모를 입력하세요"
         />
 
-        {/* 버튼 */}
         <div className="flex gap-3">
           <Button variant="quick" onClick={onClose}>
             취소
           </Button>
           <Button variant="primary" onClick={handleSave}>
-            저장
+            {submitLabel}
           </Button>
         </div>
       </div>

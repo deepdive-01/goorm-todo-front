@@ -24,13 +24,20 @@ export type TodoResponse = {
 };
 
 // 3. 할일 생성 요청 데이터 구조 (명세서 기준)
-export type TodoCreateRequest = {
-  title: string;
-  dateType: 'specific';
-  specificDate: string; // date -> specificDate
-  category: string;
-  memo: string;
-};
+export type TodoCreateRequest =
+  | {
+      title: string;
+      dateType: 'specific';
+      specificDate: string;
+      category: string;
+      memo: string;
+    }
+  | {
+      title: string;
+      dateType: 'someday';
+      category: string;
+      memo: string;
+    };
 
 // --- API 함수들 ---
 
@@ -90,5 +97,24 @@ export async function updateTodoStatus(todoId: number, isCompleted: boolean): Pr
 
   if (!response.ok) {
     throw new Error('상태 업데이트에 실패했습니다.');
+  }
+}
+
+export type TodoUpdateRequest = {
+  title?: string;
+  isCompleted?: boolean;
+  category?: TodoCategory;
+  memo?: string;
+};
+
+export async function updateTodo(todoId: number, request: TodoUpdateRequest): Promise<void> {
+  const response = await authFetch(`/api/v1/todos/${todoId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || '할일 수정에 실패했습니다.');
   }
 }

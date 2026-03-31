@@ -6,11 +6,19 @@ type TodoItemProps = {
   id: number;
   text: string;
   category: Category;
-  isCompleted: boolean; // 부모로부터 상태를 받음
-  onToggle: () => void; // 클릭 시 실행할 함수
+  isCompleted: boolean;
+  onToggle: () => void;
+  onClick: () => void;
 };
 
-export default function TodoItem({ id, text, category, isCompleted, onToggle }: TodoItemProps) {
+export default function TodoItem({
+  id,
+  text,
+  category,
+  isCompleted,
+  onToggle,
+  onClick,
+}: TodoItemProps) {
   const categoryBorderMap = {
     focus: 'border-primary',
     quick: 'border-quick',
@@ -28,11 +36,17 @@ export default function TodoItem({ id, text, category, isCompleted, onToggle }: 
   };
 
   return (
-    <li className="w-full rounded-[32px] p-6 flex gap-5 bg-white shadow-sm items-center list-none">
+    <li
+      className="w-full rounded-[32px] p-6 flex gap-5 bg-white shadow-sm items-center list-none cursor-pointer"
+      onClick={onClick}
+    >
       <button
         type="button"
         disabled={category === 'later'}
-        onClick={onToggle} // 부모의 함수 호출
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle();
+        }}
         className={`w-5.5 h-5.5 border-2 rounded-full transition-colors ${categoryBorderMap[category]} ${isCompleted ? categoryBgMap[category] : ''}`}
       />
       <Text className={isCompleted ? 'text-gray-text line-through' : 'text-black'}>{text}</Text>
