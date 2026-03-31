@@ -21,14 +21,14 @@ export default function FriendItem({
   onAcceptClick,
 }: FriendItemProps) {
   return (
-    <div className="w-full h-[88px] flex items-center gap-3 px-4 bg-gray-ui shadow-sm rounded-[32px]">
-      {/* 프로필 아바타 */}
-      <div className="w-14 h-14 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden">
+    <div className="w-full h-[88px] flex items-center gap-3 px-4 bg-gray-ui shadow-sm rounded-[32px] flex-shrink-0">
+      {/* 프로필 아바타 영역 */}
+      <div className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-white">
         <AvatarIcon className="w-full h-full" />
       </div>
 
-      {/* 이름 */}
-      <Text variant="heading" className="text-black flex-1">
+      {/* 이름 영역 */}
+      <Text variant="heading" className="text-black flex-1 truncate">
         {name}
       </Text>
 
