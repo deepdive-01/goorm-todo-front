@@ -5,7 +5,7 @@ import Text from '@/components/Text';
 import LeftArrow from '../pages/calendar/left-arrow.svg?react';
 import RightArrow from '../pages/calendar/right-arrow.svg?react';
 
-type EventCategory = 'focus' | 'quick' | 'plan' | 'drop';
+export type EventCategory = 'focus' | 'quick' | 'plan' | 'drop';
 
 export type DayEvent = {
   date: Date;
@@ -52,29 +52,14 @@ function getCalendarDays(year: number, month: number): Date[] {
 }
 
 function sortCategories(categories: EventCategory[]): EventCategory[] {
-  return [...categories].sort((a, b) => {
-    return CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b);
-  });
+  return [...categories].sort((a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b));
 }
 
 const today = new Date();
-const y = today.getFullYear();
-const m = today.getMonth();
 
-const DUMMY_EVENTS: DayEvent[] = [
-  { date: new Date(y, m, 1), categories: ['focus', 'plan', 'quick'] },
-  { date: new Date(y, m, 2), categories: ['focus', 'quick'] },
-  { date: new Date(y, m, 20), categories: ['focus', 'quick', 'plan', 'drop'] },
-  { date: new Date(y, m, 25), categories: ['focus', 'quick'] },
-];
-
-export default function Calendar({
-  events = DUMMY_EVENTS,
-  onDayClick,
-  selectedDate,
-}: CalendarProps) {
+export default function Calendar({ events = [], onDayClick, selectedDate }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(
-    new Date(today.getFullYear(), today.getMonth(), 1)
+    new Date(today.getFullYear(), today.getMonth(), 1),
   );
   const [selected, setSelected] = useState<Date>(selectedDate || today);
 
@@ -82,17 +67,15 @@ export default function Calendar({
   const month = currentMonth.getMonth();
   const days = getCalendarDays(year, month);
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(year, month - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(year, month + 1, 1));
-  };
+  const handlePrevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const handleNextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
   const getCategories = (date: Date): EventCategory[] => {
-    const categories = events.find((e) => isSameDay(e.date, date))?.categories ?? [];
-    return sortCategories(categories);
+    // 현재 날짜(date)와 events 배열에 들어있는 날짜가 같은 것을 찾습니다.
+    const dayEvent = events.find((e) => isSameDay(new Date(e.date), date));
+    if (!dayEvent) return [];
+    // 찾은 이벤트의 카테고리를 정렬해서 반환
+    return sortCategories(dayEvent.categories);
   };
 
   const handleDayClick = (date: Date) => {
@@ -107,7 +90,6 @@ export default function Calendar({
         <Text variant="heading" className="text-black">
           {format(currentMonth, 'yyyy년 M월', { locale: ko })}
         </Text>
-
         <div className="flex items-center gap-1">
           <button onClick={handlePrevMonth} className="p-1 active:scale-90 transition-transform">
             <LeftArrow className="text-primary w-5 h-5" />
@@ -142,17 +124,13 @@ export default function Calendar({
               <button
                 key={idx}
                 onClick={() => handleDayClick(date)}
-                className="flex flex-col items-center justify-center h-[36]px gap-[2px] rounded-[4px] cursor-pointer active:bg-primary-light transition-all"
+                className="flex flex-col items-center justify-center h-[36px] gap-[2px] rounded-[4px] cursor-pointer active:bg-primary-light transition-all"
               >
-                {/* 선택 시 나타나는 정사각형 배경 */}
                 <div
                   className={`relative w-[37.57px] h-[36px] rounded-[8px] transition-colors ${
-                    isSelected
-                      ? 'bg-primary-light'
-                      : ''
+                    isSelected ? 'bg-primary-light' : ''
                   }`}
                 >
-                  {/* 날짜 숫자 */}
                   <Text
                     variant="body"
                     className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 leading-none ${
@@ -162,7 +140,6 @@ export default function Calendar({
                     {date.getDate()}
                   </Text>
 
-                  {/* 하단 카테고리 도트 */}
                   {categories.length > 0 && (
                     <div className="absolute bottom-[4px] left-1/2 -translate-x-1/2 flex items-center gap-[2px]">
                       {categories.slice(0, 4).map((cat, i) => (

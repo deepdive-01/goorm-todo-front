@@ -4,8 +4,9 @@ import { ko } from 'date-fns/locale';
 import Text from '@/components/Text';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
-import CategorySelector, { type CategoryColor } from '@/pages/calendar/components/CategorySelector'
+import CategorySelector, { type CategoryColor } from '@/pages/calendar/components/CategorySelector';
 import CloseIcon from '@/assets/close.svg?react';
+import { createTodo } from '@/api/todo';
 
 type AddTaskModalProps = {
   date: Date;
@@ -14,29 +15,46 @@ type AddTaskModalProps = {
 };
 
 export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProps) {
-  const [text, setText]         = useState('');
+  const [text, setText] = useState('');
   const [category, setCategory] = useState<CategoryColor>('focus');
-  const [memo, setMemo]         = useState('');
+  const [memo, setMemo] = useState('');
 
   const dateLabel = format(date, 'M월 d일 EEEE', { locale: ko });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!text.trim()) return;
-    onSave({ text: text.trim(), category, memo });
+
+    try {
+      // API 명세서 규격에 맞게 매핑
+      await createTodo({
+        title: text.trim(),
+        dateType: 'specific',
+        specificDate: format(date, 'yyyy-MM-dd'),
+        category: category.toUpperCase(), // 'focus' -> 'FOCUS'
+        memo: memo,
+      });
+
+      onSave({ text: text.trim(), category, memo });
+      console.log('specificDate');
+      onClose();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '저장에 실패했습니다.');
+      console.error(err);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/10 backdrop-blur-md"
-      />
+      <div className="absolute inset-0 bg-black/10 backdrop-blur-md" />
 
       {/* Card */}
       <div className="relative w-full max-w-[343px] bg-white rounded-[40px] px-8 pt-[34px] pb-8 flex flex-col gap-8">
         {/* 헤더 */}
         <div className="flex items-center justify-between">
-          <Text variant="heading" className="text-black">{dateLabel}</Text>
+          <Text variant="heading" className="text-black">
+            {dateLabel}
+          </Text>
           <button
             type="button"
             onClick={onClose}
@@ -68,10 +86,13 @@ export default function AddTaskModal({ date, onSave, onClose }: AddTaskModalProp
 
         {/* 버튼 */}
         <div className="flex gap-3">
-          <Button variant="quick" onClick={onClose}>취소</Button>
-          <Button variant="primary" onClick={handleSave}>저장</Button>
+          <Button variant="quick" onClick={onClose}>
+            취소
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            저장
+          </Button>
         </div>
-
       </div>
     </div>
   );
