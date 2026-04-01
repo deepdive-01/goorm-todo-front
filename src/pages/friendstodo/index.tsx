@@ -84,7 +84,7 @@ export default function FriendTodoPage() {
           onBack={() => navigate('/friends')}
         />
 
-        {/* 스크롤 영역: 컴포넌트 크기 수축 방지를 위해 no-scrollbar 적용 */}
+        {/* 메인 영역 */}
         <main className="px-6 py-8 flex flex-col gap-8 w-full flex-1 overflow-y-auto no-scrollbar pb-24">
           {/* 달력 섹션 */}
           <section className="w-full flex flex-col gap-4 flex-shrink-0">
@@ -95,7 +95,7 @@ export default function FriendTodoPage() {
             />
           </section>
 
-          {/* 할 일 목록 - 친구의 것이므로 클릭/수정 방지 */}
+          {/* 할 일 목록 섹션 */}
           <section className="w-full flex flex-col gap-4">
             <div className="flex justify-between items-center">
               <Text variant="body" className="text-black font-semibold">
@@ -103,6 +103,7 @@ export default function FriendTodoPage() {
               </Text>
             </div>
 
+            {/* 친구의 할 일은 읽기 전용이므로 클릭 이벤트를 막기 위해 pointer-events-none 적용 */}
             <div className="flex flex-col gap-3 pointer-events-none opacity-90">
               {isLoading ? (
                 <p className="text-center py-10 text-gray-text">로딩 중...</p>
@@ -112,11 +113,12 @@ export default function FriendTodoPage() {
                 filteredTasks.map((task) => (
                   <TodoItem
                     key={task.todo_id}
-                    id={task.todo_id}
+                    // id={task.todo_id} <-- 빌드 에러 해결: id prop 제거
                     text={task.title}
-                    category="focus" // 친구 데이터에 카테고리가 없을 경우 대비 기본값
-                    isCompleted={task.is_completed} // 명세의 is_completed 적용
-                    onToggle={() => {}} // 읽기 전용이므로 빈 함수
+                    category="focus"
+                    isCompleted={task.is_completed}
+                    onToggle={() => {}} // 읽기 전용
+                    onClick={() => {}} // 읽기 전용
                   />
                 ))
               )}

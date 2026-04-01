@@ -175,29 +175,25 @@ export default function CalendarPage() {
             <SectionHeader title="이날의 할 일" rightLabel={dateLabel} />
 
             <div className="flex flex-col gap-3">
-              {filteredTasks.length === 0 ? (
-                <p className="text-center text-gray-text py-10">할 일이 없어요</p>
-              ) : (
-                filteredTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      setDeletingTaskId(task.id);
-                      setIsDeleteModalOpen(true);
-                    }}
-                  >
-                    <TodoItem
-                      id={task.id}
-                      text={task.title}
-                      category={task.category.toLowerCase() as any}
-                      isCompleted={task.isCompleted}
-                      onClick={() => openEditModal(task)}
-                      onToggle={() => handleToggleTodo(task.id, task.isCompleted)}
-                    />
-                  </div>
-                ))
-              )}
+              {filteredTasks.map((task) => (
+                <div
+                  key={task.id} // 리스트 렌더링을 위한 key로는 id가 꼭 필요합니다!
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setDeletingTaskId(task.id); // 삭제할 때 id 사용
+                    setIsDeleteModalOpen(true);
+                  }}
+                >
+                  <TodoItem
+                    // id={task.id}  <-- 이 줄만 지우면 에러 해결!
+                    text={task.title}
+                    category={task.category.toLowerCase() as any}
+                    isCompleted={task.isCompleted}
+                    onClick={() => openEditModal(task)} // 여기서 task 객체 전체를 넘기므로 id가 포함됨
+                    onToggle={() => handleToggleTodo(task.id, task.isCompleted)} // 여기서 id 사용
+                  />
+                </div>
+              ))}
             </div>
           </section>
         </main>
