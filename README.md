@@ -46,8 +46,10 @@ goorm-todo-front/
 - 로그인 / 회원가입 페이지
 <img width="380" height="908" alt="스크린샷 2026-04-02 001113" src="https://github.com/user-attachments/assets/5cd184ac-f19e-49ab-84d5-a73f0067621f" />
 <img width="384" height="902" alt="스크린샷 2026-04-02 001122" src="https://github.com/user-attachments/assets/0ef7706f-4f09-42fd-8f4f-2e6d572e2048" />
+
 - 메인 캘린더 페이지
 <img width="375" height="902" alt="image" src="https://github.com/user-attachments/assets/e6ae3671-f92b-4f2c-bcf3-cd201f623e8d" />
+
 - 할 일 생성 / 수정 / 조회 UI
 <img width="364" height="896" alt="image" src="https://github.com/user-attachments/assets/be8e81f7-6a1d-4f10-adc3-940d9d6e0866" />
 <img width="363" height="905" alt="image" src="https://github.com/user-attachments/assets/068dab64-03b1-44fe-9ff2-72e32a618dc3" />
@@ -57,8 +59,10 @@ goorm-todo-front/
 <img width="386" height="907" alt="image" src="https://github.com/user-attachments/assets/a6a02e11-b593-4895-b2f8-2b7d94324791" />
 <img width="370" height="901" alt="image" src="https://github.com/user-attachments/assets/95466135-baed-4483-83b0-03e0f4bc3e18" />
 <img width="423" height="910" alt="image" src="https://github.com/user-attachments/assets/cf13f7f7-3a98-495e-ac4a-5d94003acdc9" />
+
 - 받은 친구 요청 및 친구 목록 화면
 <img width="687" height="911" alt="image" src="https://github.com/user-attachments/assets/91779771-eca4-4c06-9180-1bdaff8ff569" />
+
 - 친구 캘린더 조회 화면
 <img width="361" height="896" alt="image" src="https://github.com/user-attachments/assets/81c49369-2478-43f2-b7ed-717b582bd241" />
 
