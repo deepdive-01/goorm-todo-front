@@ -3,16 +3,16 @@ import Text from './Text';
 type Category = 'focus' | 'quick' | 'plan' | 'drop' | 'later';
 
 type TodoItemProps = {
-  id: number;
+  // id: number; // 1. 에러 TS6133 해결: 사용하지 않는 id 제거
   text: string;
   category: Category;
   isCompleted: boolean;
   onToggle: () => void;
-  onClick: () => void;
+  onClick?: () => void; // 2. 에러 TS2741 해결: 필수에서 선택 사항으로 변경 (? 추가)
 };
 
 export default function TodoItem({
-  id,
+  // id, // 1. 여기서도 제거
   text,
   category,
   isCompleted,
@@ -38,7 +38,8 @@ export default function TodoItem({
   return (
     <li
       className="w-full rounded-[32px] p-6 flex gap-5 bg-white shadow-sm items-center list-none cursor-pointer"
-      onClick={onClick}
+      // onClick이 전달되었을 때만 실행되도록 안전하게 처리
+      onClick={() => onClick?.()}
     >
       <button
         type="button"

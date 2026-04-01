@@ -6,14 +6,13 @@ import Text from '@/components/Text';
 import FriendItem from '@/components/FriendItem';
 import AddFriendCard from './components/AddFriendCard';
 import RightArrow from './right-arrow.svg?react';
-import { getFriends, deleteFriend, type FriendListItem } from '@/api/friend'; //
+import { getFriends, deleteFriend, type FriendListItem } from '@/api/friend';
 import FriendRequestModal from '@/pages/friendstodo/components/FriendRequestModal';
-import DeleteModal from './components/DeleteFriendModal'; // 할 일 삭제 모달을 친구 삭제용으로 재사용
+import DeleteModal from './components/DeleteFriendModal';
 
 export default function FriendsPage() {
   const navigate = useNavigate();
   const [friends, setFriends] = useState<FriendListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   // 모달 상태 관리
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -23,14 +22,11 @@ export default function FriendsPage() {
   // 친구 목록 조회 함수
   const fetchFriends = async () => {
     try {
-      setIsLoading(true);
       const res = await getFriends();
       // API 명세에 따라 res.data가 배열임을 확인
       setFriends(res.data ?? []);
     } catch (err) {
       console.error('친구 목록 로딩 실패:', err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -50,7 +46,7 @@ export default function FriendsPage() {
     if (!selectedFriend) return;
 
     try {
-      await deleteFriend(selectedFriend.id); //
+      await deleteFriend(selectedFriend.id);
       setFriends((prev) => prev.filter((f) => f.friend_id !== selectedFriend.id));
       setIsDeleteModalOpen(false);
     } catch (err) {
@@ -96,17 +92,14 @@ export default function FriendsPage() {
                       navigate('/friendstodo', {
                         state: {
                           friendId: friend.friend_id,
-                          name: displayName, // won이 전달됩니다.
+                          name: displayName,
                         },
                       })
                     }
                     onContextMenu={(e) => handleContextMenu(e, friend.friend_id, displayName)}
                     className="cursor-pointer"
                   >
-                    <FriendItem
-                      name={displayName} // 이제 'won'이 정상적으로 뜹니다!
-                      buttonType="none"
-                    />
+                    <FriendItem name={displayName} buttonType="none" />
                   </div>
                 );
               })}

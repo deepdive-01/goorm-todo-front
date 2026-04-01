@@ -107,7 +107,6 @@ export default function TodayPage() {
     const fetchQuote = async () => {
       try {
         const result = await getRandomQuote();
-
         setQuote({
           content: result.data.content,
           author: result.data.author,
@@ -122,7 +121,6 @@ export default function TodayPage() {
         setIsQuoteLoading(false);
       }
     };
-
     fetchQuote();
   }, []);
 
@@ -130,18 +128,12 @@ export default function TodayPage() {
     fetchTodos();
   }, []);
 
-  const handleToggle = async (todo: Todo) => {
+  // TodoItem에서 id를 받지 않으므로, 호출 시 todo 객체에서 id를 직접 사용합니다.
+  const handleToggle = async (todoId: number, currentStatus: boolean) => {
     try {
-      await updateTodoStatus(todo.id, !todo.isCompleted);
-
+      await updateTodoStatus(todoId, !currentStatus);
       setTodos((prev) =>
-        prev.map((item) =>
-          item.id === todo.id ? { ...item, isCompleted: !item.isCompleted } : item,
-        ),
-      );
-
-      setSelectedTodo((prev) =>
-        prev && prev.id === todo.id ? { ...prev, isCompleted: !prev.isCompleted } : prev,
+        prev.map((item) => (item.id === todoId ? { ...item, isCompleted: !currentStatus } : item)),
       );
     } catch (error) {
       console.error('할일 상태 업데이트 실패:', error);
@@ -157,23 +149,18 @@ export default function TodayPage() {
     category: CategoryColor;
     memo: string;
   }) => {
-    if (taskDateType === 'specific') {
-      await createTodo({
-        title: text,
-        dateType: 'specific',
-        specificDate: today,
-        category: mapCategoryToApi(category),
-        memo,
-      });
-    } else {
-      await createTodo({
-        title: text,
-        dateType: 'someday',
-        category: mapCategoryToApi(category),
-        memo,
-      });
-    }
+    const data =
+      taskDateType === 'specific'
+        ? {
+            title: text,
+            dateType: 'specific' as const,
+            specificDate: today,
+            category: mapCategoryToApi(category),
+            memo,
+          }
+        : { title: text, dateType: 'someday' as const, category: mapCategoryToApi(category), memo };
 
+    await createTodo(data);
     await fetchTodos();
   };
 
@@ -187,20 +174,17 @@ export default function TodayPage() {
     memo: string;
   }) => {
     if (!selectedTodo) return;
-
     await updateTodo(selectedTodo.id, {
       title: text,
       category: mapCategoryToApi(category),
       memo,
     });
-
     closeTaskModal();
     await fetchTodos();
   };
 
   const handleDeleteConfirm = async () => {
     if (deletingTaskId === null) return;
-
     try {
       await deleteTodo(deletingTaskId);
       setIsDeleteModalOpen(false);
@@ -221,7 +205,8 @@ export default function TodayPage() {
       <div className="w-full flex items-center justify-center">
         <div className="w-93.75 bg-gray-ui min-h-screen flex flex-col">
           <Header />
-          <main className="px-6 py-8 flex flex-1 flex-col gap-12 w-full">
+          <main className="px-6 py-8 flex flex-1 flex-col gap-12 w-full overflow-y-auto no-scrollbar">
+            {/* 오늘의 할 일 섹션 */}
             <section className="w-full flex flex-col gap-6">
               <SectionHeader
                 title="오늘의 할 일"
@@ -242,11 +227,11 @@ export default function TodayPage() {
                       }}
                     >
                       <TodoItem
-                        id={todo.id}
+                        // id={todo.id} -> 에러 원인 제거
                         text={todo.title}
                         category={mapCategoryToUi(todo.category)}
                         isCompleted={todo.isCompleted}
-                        onToggle={() => handleToggle(todo)}
+                        onToggle={() => handleToggle(todo.id, todo.isCompleted)}
                         onClick={() => openEditModal(todo)}
                       />
                     </div>
@@ -257,16 +242,18 @@ export default function TodayPage() {
               )}
             </section>
 
+            {/* 명언 섹션 */}
             <section className="w-full flex flex-col gap-4 py-12 border border-primary border-dashed items-center rounded-4xl">
               <QuoteIcon />
-              <div className="w-full px-4 pb-4">
-                <Text variant="title" className="text-center">
+              <div className="w-full px-4 pb-4 text-center">
+                <Text variant="title">
                   {isQuoteLoading ? '명언을 불러오는 중...' : quote.content}
                 </Text>
               </div>
               <div className="w-12 h-px bg-primary"></div>
             </section>
 
+            {/* 언젠가 할 일 섹션 */}
             <section className="w-full flex flex-col gap-6">
               <SectionHeader
                 title="언젠가 할 일"
@@ -287,11 +274,11 @@ export default function TodayPage() {
                       }}
                     >
                       <TodoItem
-                        id={todo.id}
+                        // id={todo.id} -> 에러 원인 제거
                         text={todo.title}
                         category="later"
                         isCompleted={todo.isCompleted}
-                        onToggle={() => handleToggle(todo)}
+                        onToggle={() => handleToggle(todo.id, todo.isCompleted)}
                         onClick={() => openEditModal(todo)}
                       />
                     </div>
