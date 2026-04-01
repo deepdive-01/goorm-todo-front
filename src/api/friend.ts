@@ -63,14 +63,11 @@ export interface UserSearchResponse {
   username: string;
   nickname: string;
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 /** API 함수 **/
 
 // 1. 친구 요청 전송
 export async function sendFriendRequest(receiveId: number) {
-  const res = await authFetch(`${API_BASE_URL}/api/v1/friends/request`, {
+  const res = await authFetch(`/api/v1/friends/request`, {
     method: 'POST',
     body: JSON.stringify({ receive_id: receiveId }),
   });
@@ -80,7 +77,7 @@ export async function sendFriendRequest(receiveId: number) {
 
 // 받은 친구 요청 목록 조회
 export async function getReceivedRequests() {
-  const res = await authFetch(`${API_BASE_URL}/api/v1/friends/request/received`);
+  const res = await authFetch(`/api/v1/friends/request/received`);
   if (!res.ok) throw new Error('받은 요청 조회 실패');
   return res.json(); // { data: ReceivedFriendRequest[] } 반환 가정
 }
@@ -88,7 +85,7 @@ export async function getReceivedRequests() {
 // 2. 친구 요청 수락 및 거절
 // status 값은 "ACCEPTED" 또는 "REJECTED"만 가능
 export async function updateFriendStatus(friendId: number, status: 'ACCEPTED' | 'REJECTED') {
-  const res = await authFetch(`${API_BASE_URL}/api/v1/friends/request/${friendId}`, {
+  const res = await authFetch(`/api/v1/friends/request/${friendId}`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
   });
@@ -98,7 +95,7 @@ export async function updateFriendStatus(friendId: number, status: 'ACCEPTED' | 
 
 // 4. 친구 목록 조회
 export async function getFriends() {
-  const res = await authFetch(`${API_BASE_URL}/api/v1/friends`);
+  const res = await authFetch(`/api/v1/friends`);
   if (!res.ok) throw new Error('친구 목록 조회 실패');
   return res.json();
 }
@@ -106,7 +103,7 @@ export async function getFriends() {
 // 5. 친구 캘린더 조회
 // 명세에 따라 month 쿼리 파라미터(예: 2025-03)를 포함할 수 있습니다.
 export async function getFriendCalendar(friendId: number, month: string = '2025-03') {
-  const res = await authFetch(`${API_BASE_URL}/api/v1/friends/${friendId}/calendar?month=${month}`);
+  const res = await authFetch(`/api/v1/friends/${friendId}/calendar?month=${month}`);
   if (!res.ok) throw new Error('친구 캘린더 조회 실패');
   return res.json();
 }
@@ -129,9 +126,7 @@ export async function deleteFriend(friendId: number): Promise<FriendDeleteRespon
 /** 유저 검색 API**/
 export async function searchUsers(nickname: string) {
   // 쿼리 파라미터로 nickname 전달
-  const res = await authFetch(
-    `${API_BASE_URL}/api/v1/users/search?nickname=${encodeURIComponent(nickname)}`,
-  );
+  const res = await authFetch(`/api/v1/users/search?nickname=${encodeURIComponent(nickname)}`);
   if (!res.ok) throw new Error('유저 검색 실패');
   return res.json(); // { data: UserSearchResponse[] } 반환
 }
