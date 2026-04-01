@@ -81,6 +81,7 @@ export default function RegisterSection({
         />
         <Input
           label="비밀번호"
+          type="password"
           placeholder="비밀번호를 입력하세요"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -89,6 +90,7 @@ export default function RegisterSection({
         <div>
           <Input
             label="비밀번호 확인"
+            type="password"
             placeholder="비밀번호를 다시 입력하세요"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
