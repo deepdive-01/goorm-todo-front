@@ -40,13 +40,14 @@ export type TodoCreateRequest =
     };
 
 // --- API 함수들 ---
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * 할일 목록 조회
  * @param date YYYY-MM-DD 형식
  */
 export async function getTodos(date: string): Promise<TodoResponse> {
-  const response = await authFetch(`/api/v1/todos?date=${date}`);
+  const response = await authFetch(`${API_BASE_URL}/api/v1/todos?date=${date}`);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -60,7 +61,7 @@ export async function getTodos(date: string): Promise<TodoResponse> {
  * 할일 생성
  */
 export async function createTodo(request: TodoCreateRequest): Promise<void> {
-  const response = await authFetch('/api/v1/todos', {
+  const response = await authFetch(`${API_BASE_URL}/api/v1/todos`, {
     method: 'POST',
     // 요청 본문을 서버 명세서에 맞게 JSON화 하여 전송
     body: JSON.stringify(request),
@@ -76,7 +77,7 @@ export async function createTodo(request: TodoCreateRequest): Promise<void> {
  * 할일 삭제
  */
 export async function deleteTodo(todoId: number): Promise<void> {
-  const response = await authFetch(`/api/v1/todos/${todoId}`, {
+  const response = await authFetch(`${API_BASE_URL}/api/v1/todos/${todoId}`, {
     method: 'DELETE',
   });
 
@@ -90,7 +91,7 @@ export async function deleteTodo(todoId: number): Promise<void> {
  * 할일 업데이트
  */
 export async function updateTodoStatus(todoId: number, isCompleted: boolean): Promise<void> {
-  const response = await authFetch(`/api/v1/todos/${todoId}`, {
+  const response = await authFetch(`${API_BASE_URL}/api/v1/todos/${todoId}`, {
     method: 'PATCH',
     body: JSON.stringify({ isCompleted }),
   });
@@ -108,7 +109,7 @@ export type TodoUpdateRequest = {
 };
 
 export async function updateTodo(todoId: number, request: TodoUpdateRequest): Promise<void> {
-  const response = await authFetch(`/api/v1/todos/${todoId}`, {
+  const response = await authFetch(`${API_BASE_URL}/api/v1/todos/${todoId}`, {
     method: 'PATCH',
     body: JSON.stringify(request),
   });
